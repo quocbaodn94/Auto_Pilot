@@ -1,0 +1,60 @@
+Point_<int> findIntersection(StraightLine l1, StraightLine l2)
+{
+    Point_<int> I;
+    float a1, a2;
+    Point_<float> a = l1.A;
+    Point_<float> b = l1.B;
+    Point_<float> c = l2.A;
+    Point_<float> d = l2.B;
+    if(c.x == d.x){
+        I.x = j/2;
+        I.y = (a.y - b.y)*(I.x - a.x)/(a.x-b.x) + a.y;
+    }
+    else{
+        a1 = ((a.y-b.y)/(a.x-b.x)); //slope of the line 1
+        a2 = ((c.y-d.y)/(c.x-d.x)); //slope of the line 2
+        if(a1 != a2){
+        I.x = (a1*a.x - a2*c.x - a.y + c.y)/(a1-a2);
+        I.y = a1*(I.x-a.x) + a.y;
+        }
+    }
+    return I;
+}
+
+float findDistance(Point I, StraightLine l)
+{
+    float a = l.A.y - l.B.y;
+    float b = l.B.x - l.A.x;
+    float c = -a*l.A.x - b*l.A.y;
+    float d = fabs(a*I.x + b*I.y + c) / sqrt(pow(a,2) + pow(b,2));
+    return d;
+}
+
+ostringstream lable1, lable2, lable3, lable4, lable5, lable6;
+
+        lable1 << angle;
+        putText(img, lable1.str(), Point(j/2, i/2), FONT_HERSHEY_PLAIN, 5.0, CV_RGB(0,255,0), 5.0);
+
+        float left_distance = findDistance(Point(j/2,i), leftlane);
+        lable2 << left_distance;
+        putText(img, lable2.str(), Point(j/4, i/4), FONT_HERSHEY_PLAIN, 5.0, CV_RGB(0,255,0), 5.0);
+
+        float right_distance = findDistance(Point(j/2,i), rightlane);
+        lable3 << right_distance;
+        putText(img, lable3.str(), Point(3*j/4, i/4), FONT_HERSHEY_PLAIN, 5.0, CV_RGB(0,255,0), 5.0);
+
+        StraightLine middle_line;
+        middle_line.A = Point(j/2,200);
+        middle_line.B = Point(j/2,600);
+
+        Point_<int> I_left = findIntersection(leftlane, middle_line);
+        circle(img, I_left, 15, CV_RGB(255,0,0),10);
+        int angle_left = acos(left_distance / (i - I_left.y)) * 180 / CV_PI;
+        lable4 << angle_left;
+        putText(img, lable4.str(), Point(j/4, 3*i/4), FONT_HERSHEY_PLAIN, 5.0, CV_RGB(0,255,0), 5.0);
+
+        Point_<int> I_right = findIntersection(rightlane, middle_line);
+        circle(img, I_right, 15, CV_RGB(255,0,0),10);
+        int angle_right = acos(right_distance / (i - I_right.y)) * 180 / CV_PI;
+        lable5 << angle_right;
+        putText(img, lable5.str(), Point(3*j/4, 3*i/4), FONT_HERSHEY_PLAIN, 5.0, CV_RGB(0,255,0), 5.0);
